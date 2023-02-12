@@ -471,7 +471,7 @@ class DatabaseMigration {
 
     if (databaseSchemaVersion < 53) {
       await this.$executeQuery('ALTER TABLE pools ADD unique_id int NOT NULL DEFAULT -1');
-      await this.updateToSchemaVersion(50);
+      await this.updateToSchemaVersion(53);
     }
 
     if (databaseSchemaVersion < 54) {
@@ -480,7 +480,7 @@ class DatabaseMigration {
       await this.$executeQuery('DELETE FROM `pools`');
       await this.$executeQuery('ALTER TABLE pools AUTO_INCREMENT = 1');
       this.uniqueLog(logger.notice, '`pools` table has been truncated`');
-      await this.updateToSchemaVersion(51);
+      await this.updateToSchemaVersion(54);
     }
   }
 
