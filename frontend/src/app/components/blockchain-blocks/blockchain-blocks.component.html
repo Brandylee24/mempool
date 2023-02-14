@@ -1,6 +1,6 @@
 <div class="blocks-container blockchain-blocks-container" [class.time-ltr]="timeLtr" [style.left]="static ? (offset || 0) + 'px' : null" *ngIf="static || (loadingBlocks$ | async) === false; else loadingBlocksTemplate">
   <div *ngFor="let block of blocks; let i = index; trackBy: trackByBlocksFn">
-    <ng-container *ngIf="block && !block.loading && !block.placeholder; else placeholderBlock">
+    <ng-container *ngIf="connected && block && !block.loading && !block.placeholder; else placeholderBlock">
       <div [attr.data-cy]="'bitcoin-block-' + i" class="text-center bitcoin-block mined-block blockchain-blocks-{{ i }}" id="bitcoin-block-{{ block.height }}" [ngStyle]="blockStyles[i]" [class.blink-bg]="(specialBlocks[block.height] !== undefined)">
         <a draggable="false" [routerLink]="['/block/' | relativeUrl, block.id]" [state]="{ data: { block: block } }"
           class="blockLink" [ngClass]="{'disabled': (this.stateService.blockScrolling$ | async)}">&nbsp;</a>
@@ -35,16 +35,16 @@
       </div>
     </ng-container>
     <ng-template #placeholderBlock>
-      <ng-container *ngIf="block && block.placeholder && !loadingTip; else loadingBlock">
+      <ng-container *ngIf="block && block.placeholder && connected && !loadingTip; else loadingBlock">
         <div [attr.data-cy]="'bitcoin-block-' + i" class="text-center bitcoin-block mined-block placeholder-block blockchain-blocks-{{ i }}" id="bitcoin-block-{{ block.height }}" [ngStyle]="blockStyles[i]">
  
         </div>
       </ng-container>
     </ng-template>
     <ng-template #loadingBlock>
-      <ng-container *ngIf="loadingTip || (block && block.loading)">
+      <ng-container *ngIf="!connected || loadingTip || (block && block.loading)">
         <div class="flashing loading">
-          <div class="text-center bitcoin-block mined-block" id="bitcoin-block-{{ block.height }}" [ngStyle]="blockStyles[i]"></div>
+          <div class="text-center bitcoin-block mined-block" id="bitcoin-block-{{ block.height }}" [ngStyle]="emptyBlockStyles[i]"></div>
         </div>
       </ng-container>
     </ng-template>
