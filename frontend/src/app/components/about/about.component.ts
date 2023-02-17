@@ -17,13 +17,16 @@ import { ITranslators } from '../../interfaces/node-api.interface';
 })
 export class AboutComponent implements OnInit {
   backendInfo$: Observable<IBackendInfo>;
-  sponsors$: Observable<any>;
-  translators$: Observable<ITranslators>;
-  allContributors$: Observable<any>;
   frontendGitCommitHash = this.stateService.env.GIT_COMMIT_HASH;
   packetJsonVersion = this.stateService.env.PACKAGE_JSON_VERSION;
   officialMempoolSpace = this.stateService.env.OFFICIAL_MEMPOOL_SPACE;
   showNavigateToSponsor = false;
+
+  ogSponsors$: Observable<any>;
+  whaleSponsors$: Observable<any>;
+  chadSponsors$: Observable<any>;
+  translators$: Observable<ITranslators>;
+  allContributors$: Observable<any>;
 
   constructor(
     private websocketService: WebsocketService,
@@ -39,7 +42,10 @@ export class AboutComponent implements OnInit {
     this.seoService.setTitle($localize`:@@004b222ff9ef9dd4771b777950ca1d0e4cd4348a:About`);
     this.websocketService.want(['blocks']);
 
-    this.sponsors$ = this.apiService.getDonation$();
+    this.ogSponsors$ = this.apiService.getOgSponsors$();
+    this.whaleSponsors$ = this.apiService.getWhaleSponsors$();
+    this.chadSponsors$ = this.apiService.getChadSponsors$();
+
     this.translators$ = this.apiService.getTranslators$()
       .pipe(
         map((translators) => {
