@@ -96,6 +96,12 @@ export interface AuditTransaction {
   modifiedNode: HeapNode<AuditTransaction>;
 }
 
+export interface GbtCandidates {
+  txs: { [txid: string ]: boolean },
+  added: string[];
+  removed: string[];
+}
+
 export interface ThreadTransaction {
   txid: string;
   fee: number;
