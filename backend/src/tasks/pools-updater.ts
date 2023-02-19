@@ -31,20 +31,14 @@ class PoolsUpdater {
 
     this.lastRun = now;
 
-    if (config.SOCKS5PROXY.ENABLED) {
-      logger.info(`Updating latest mining pools from ${this.poolsUrl} over the Tor network`, logger.tags.mining);
-    } else {
-      logger.info(`Updating latest mining pools from ${this.poolsUrl} over clearnet`, logger.tags.mining);
-    }
-
     try {
+      if (config.DATABASE.ENABLED === true) {
+        this.currentSha = await this.getShaFromDb();
+      }
+
       const githubSha = await this.fetchPoolsSha(); // Fetch pools.json sha from github
       if (githubSha === undefined) {
         return;
-      }
-
-      if (config.DATABASE.ENABLED === true) {
-        this.currentSha = await this.getShaFromDb();
       }
 
       logger.debug(`Pools.json sha | Current: ${this.currentSha} | Github: ${githubSha}`);
@@ -52,10 +46,19 @@ class PoolsUpdater {
         return;
       }
 
+      // See backend README for more details about the mining pools update process
+      if (this.currentSha !== undefined && // If we don't have any mining pool, download it at least once
+        config.MEMPOOL.AUTOMATIC_BLOCK_REINDEXING !== true && // Automatic pools update is disabled
+        !process.env.npm_config_update_pools // We're not manually updating mining pool
+      ) {
+        logger.info(`Updated mining pools are available (${githubSha}) but AUTOMATIC_BLOCK_REINDEXING is disabled`);
+        return;
+      }
+
       if (this.currentSha === undefined) {
-        logger.info(`Downloading pools.json for the first time from ${this.poolsUrl}`, logger.tags.mining);
+        logger.info(`Downloading pools.json for the first time from ${this.poolsUrl}, using ${config.SOCKS5PROXY.ENABLED ? 'Tor' : 'clearnet'}`, logger.tags.mining);
       } else {
-        logger.warn(`Pools.json is outdated, fetch latest from ${this.poolsUrl}`, logger.tags.mining);
+        logger.warn(`Pools.json is outdated, fetch latest from ${this.poolsUrl}, using ${config.SOCKS5PROXY.ENABLED ? 'Tor' : 'clearnet'}`, logger.tags.mining);
       }
       const poolsJson = await this.query(this.poolsUrl);
       if (poolsJson === undefined) {
