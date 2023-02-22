@@ -34,7 +34,22 @@
         text-align: left;
       }
     }
+    .info-link {
+      color: rgba(255, 255, 255, 0.4);
+      margin-left: 5px;
+    }
   }
+}
+
+.block-subtitle.actual a {
+  position: absolute;
+  top: -3px;
+}
+
+.block-subtitle.actual fa-icon {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  margin-left: 8px;
 }
 
 h1 {
@@ -227,4 +242,13 @@ h1 {
   .ng-fa-icon {
     margin-right: 1em;
   }
+}
+
+.beta {
+  font-size: 10px;
+  margin: 5p;
+  padding: 5p;
+  position: absolute;
+  top: 11px;
+  margin-left: 10px;
 }
